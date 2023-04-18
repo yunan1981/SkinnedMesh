@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Three.js 圆柱体示例</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <script src="libs\three.js"></script>
+  <script>
+    // 创建场景
+    const scene = new THREE.Scene();
+
+    // 创建相机
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // 创建渲染器
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // 创建圆柱体
+    const geometry = new THREE.CylinderGeometry(1, 1, 2, 32, 4);
+    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+    // 创建骨骼
+    const bones = [];
+    const bonePositions = [0.5, 0.3, 0.1, -0.1, -0.3, -0.5];
+    for (let i = 0; i < bonePositions.length; i++) {
+      const bone = new THREE.Bone();
+      bone.position.y = bonePositions[i] * geometry.parameters.height / 2;
+      bones.push(bone);
+    }
+
+    // 给几何体应用蒙皮
+    const skeleton = new THREE.Skeleton(bones);
+    const mesh = new THREE.SkinnedMesh(geometry, material);
+    mesh.add(bones[0]);
+    mesh.bind(skeleton);
+    scene.add(mesh);
+
+    // 渲染场景
+    function render() {
+      requestAnimationFrame(render);
+      mesh.rotation.x += 0.01;
+      mesh.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+    render();
+    console.log("done");
+  </script>
+</body>
+</html>
